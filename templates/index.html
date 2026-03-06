@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <h1>Welcome to Placement Portal</h1>
+    <p>Please select your role to continue.</p>
+
+    <ul>
+        <li><a href="{{ url_for('student_login') }}">Student Login</a></li>
+        <li><a href="{{ url_for('company_login') }}">Company Login</a></li>
+        <li><a href="{{ url_for('admin_login') }}">Admin Login</a></li>
+    </ul>
+{% endblock body %}

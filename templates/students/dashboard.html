@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <h1>Student Dashboard</h1>
+    {% if student %}
+        <p>Welcome, <strong>{{ student.name }}</strong> | {{ student.college }} &mdash; {{ student.course }}, Year {{ student.year }}</p>
+    {% endif %}
+
+    <nav>
+        <a href="/student/profile">Update Profile</a>
+        <a href="/student/drives">View Placement Drives</a>
+        <a href="/student/apply">Apply for Drive</a>
+        <a href="/student/status">Application Status</a>
+        <a href="/student/history">Placement History</a>
+        <a href="{{ url_for('student_logout') }}">Logout</a>
+    </nav>
+{% endblock body %}

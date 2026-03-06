@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <h1>Admin Dashboard</h1>
+    <p>
+        Registered Students: <strong>{{ students | length }}</strong> &nbsp;|&nbsp;
+        Registered Companies: <strong>{{ companies | length }}</strong>
+    </p>
+
+    <nav>
+        <a href="/admin/drives">Manage Placement Drives</a>
+        <a href="/admin/applications">View Student Applications</a>
+        <a href="/admin/companies">Manage Companies</a>
+        <a href="/admin/students">Manage Students</a>
+        <a href="/admin/reports">Generate Reports</a>
+        <a href="{{ url_for('admin_logout') }}">Logout</a>
+    </nav>
+{% endblock body %}

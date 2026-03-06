@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Placement Portal</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 20px; }
+        .flash { padding: 10px 15px; border-radius: 4px; margin-bottom: 15px; }
+        .flash.error { background: #fde8e8; color: #c0392b; border: 1px solid #e74c3c; }
+        .flash.success { background: #e8f8e8; color: #1e8449; border: 1px solid #27ae60; }
+        nav a { margin-right: 15px; }
+    </style>
+</head>
+<body>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% block body %}{% endblock body %}
+
+</body>
+</html>

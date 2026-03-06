@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <h1>Company Dashboard</h1>
+    {% if company %}
+        <p>Welcome, <strong>{{ company.name }}</strong></p>
+    {% endif %}
+
+    <nav>
+        <a href="/company/profile">Company Profile</a>
+        <a href="/company/create-drive">Create Placement Drive</a>
+        <a href="/company/my-drives">View My Drives</a>
+        <a href="/company/applications">View Student Applications</a>
+        <a href="/company/shortlist">Shortlist Candidates</a>
+        <a href="{{ url_for('company_logout') }}">Logout</a>
+    </nav>
+{% endblock body %}
