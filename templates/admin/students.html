@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block body %}
+<h1>All Students</h1>
+<a href="{{ url_for('admin_dashboard') }}">Back to Dashboard</a>
+<hr>
+
+<form method="GET">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search students...">
+    <button type="submit">Search</button>
+</form>
+<br>
+
+{% if students %}
+    {% for student in students %}
+        <p>
+            <strong>{{ student.full_name }}</strong> | {{ student.email }} | {{ student.department or 'N/A' }}<br>
+            CGPA: {{ student.cgpa or 'N/A' }} | Status: {{ 'Active' if student.is_active else 'Blacklisted' }}<br>
+            <form method="POST" action="{{ url_for('blacklisted_students', student_id=student.id) }}" style="display:inline;">
+                <button type="submit">Blacklist</button>
+            </form>
+            <form method="POST" action="{{ url_for('activated_students', student_id=student.id) }}" style="display:inline;">
+                <button type="submit">Activate</button>
+            </form>
+            <form method="POST" action="{{ url_for('deleted_students', student_id=student.id) }}" style="display:inline;">
+                <button type="submit">Delete</button>
+            </form>
+        </p>
+        <hr>
+    {% endfor %}
+{% else %}
+    <p>No students found.</p>
+{% endif %}
+
+{% endblock body %}

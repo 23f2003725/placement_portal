@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block body %}
+<h1>Edit Drive</h1>
+<a href="{{ url_for('company_dashboard') }}">Back to Dashboard</a>
+<hr>
+
+<form method="POST">
+    <label>Job Title</label><br>
+    <input type="text" name="job_title" value="{{ drive.job_title }}" required><br><br>
+
+    <label>Description</label><br>
+    <textarea name="description">{{ drive.description or '' }}</textarea><br><br>
+
+    <label>Eligibility</label><br>
+    <textarea name="eligibility">{{ drive.eligibility or '' }}</textarea><br><br>
+
+    <label>Package</label><br>
+    <input type="text" name="package" value="{{ drive.package or '' }}"><br><br>
+
+    <label>Location</label><br>
+    <input type="text" name="location" value="{{ drive.location or '' }}"><br><br>
+
+    <label>Deadline</label><br>
+    <input type="text" name="deadline" value="{{ drive.deadline or '' }}"><br><br>
+
+    <button type="submit">Update</button>
+</form>
+
+{% endblock body %}

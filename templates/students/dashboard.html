@@ -1,17 +1,42 @@
 {% extends "base.html" %}
 
 {% block body %}
-    <h1>Student Dashboard</h1>
-    {% if student %}
-        <p>Welcome, <strong>{{ student.name }}</strong> | {{ student.college }} &mdash; {{ student.course }}, Year {{ student.year }}</p>
-    {% endif %}
+<h1>Welcome, {{ student.full_name }}</h1>
 
-    <nav>
-        <a href="/student/profile">Update Profile</a>
-        <a href="/student/drives">View Placement Drives</a>
-        <a href="/student/apply">Apply for Drive</a>
-        <a href="/student/status">Application Status</a>
-        <a href="/student/history">Placement History</a>
-        <a href="{{ url_for('student_logout') }}">Logout</a>
-    </nav>
+<a href="{{ url_for('student_profile') }}">Profile</a> |
+<a href="{{ url_for('view_drives') }}">View Drives</a> |
+<a href="{{ url_for('student_history') }}">History</a> |
+<a href="{{ url_for('student_logout') }}">Logout</a>
+
+<hr>
+
+<h2>My Applications</h2>
+{% if applications %}
+    {% for app in applications %}
+        <p>{{ app.drive.job_title }} at {{ app.drive.company.company_name }} — <strong>{{ app.status }}</strong></p>
+    {% endfor %}
+{% else %}
+    <p>No applications yet.</p>
+{% endif %}
+
+<hr>
+
+<h2>Open Drives</h2>
+{% if drives %}
+    {% for drive in drives %}
+        <p>
+            {{ drive.job_title }} — {{ drive.company.company_name }} | {{ drive.package }} | Deadline: {{ drive.deadline }}
+            {% if drive.id in applied_drive_ids %}
+                — <em>Applied</em>
+            {% else %}
+                <form method="POST" action="{{ url_for('student_apply', drive_id=drive.id) }}" style="display:inline;">
+                    <button type="submit">Apply</button>
+                </form>
+            {% endif %}
+        </p>
+    {% endfor %}
+{% else %}
+    <p>No drives available.</p>
+{% endif %}
+
 {% endblock body %}

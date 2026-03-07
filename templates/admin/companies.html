@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block body %}
+<h1>All Companies</h1>
+<a href="{{ url_for('admin_dashboard') }}">Back to Dashboard</a>
+<hr>
+
+<form method="GET">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search companies...">
+    <button type="submit">Search</button>
+</form>
+<br>
+
+{% if companies %}
+    {% for company in companies %}
+        <p>
+            <strong>{{ company.company_name }}</strong> | {{ company.email }} | Status: {{ company.approval_status }}<br>
+            <form method="POST" action="{{ url_for('approved_companies', company_id=company.id) }}" style="display:inline;">
+                <button type="submit">Approve</button>
+            </form>
+            <form method="POST" action="{{ url_for('rejected_companies', company_id=company.id) }}" style="display:inline;">
+                <button type="submit">Reject</button>
+            </form>
+            <form method="POST" action="{{ url_for('blacklisted_companies', company_id=company.id) }}" style="display:inline;">
+                <button type="submit">Blacklist</button>
+            </form>
+            <form method="POST" action="{{ url_for('deleted_companies', company_id=company.id) }}" style="display:inline;">
+                <button type="submit">Delete</button>
+            </form>
+        </p>
+        <hr>
+    {% endfor %}
+{% else %}
+    <p>No companies found.</p>
+{% endif %}
+
+{% endblock body %}

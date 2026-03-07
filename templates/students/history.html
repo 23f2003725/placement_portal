@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block body %}
+<h1>Application History</h1>
+<a href="{{ url_for('student_dashboard') }}">Back to Dashboard</a>
+<hr>
+
+{% if applications %}
+    {% for app in applications %}
+        <p>
+            <strong>{{ app.drive.job_title }}</strong> at {{ app.drive.company.company_name }}<br>
+            Package: {{ app.drive.package }} | Location: {{ app.drive.location }}<br>
+            Applied on: {{ app.applied_date.strftime('%d %b %Y') }} | Status: <strong>{{ app.status }}</strong>
+        </p>
+        <hr>
+    {% endfor %}
+{% else %}
+    <p>No applications yet.</p>
+{% endif %}
+
+{% endblock body %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block body %}
+<h1>Applications for {{ drive.job_title }}</h1>
+<a href="{{ url_for('company_dashboard') }}">Back to Dashboard</a>
+<hr>
+
+{% if applications %}
+    {% for app in applications %}
+        <p>
+            <strong>{{ app.student.full_name }}</strong> | {{ app.student.email }}<br>
+            Department: {{ app.student.department or 'N/A' }} | CGPA: {{ app.student.cgpa or 'N/A' }}<br>
+            Applied on: {{ app.applied_date.strftime('%d %b %Y') }} | Status: <strong>{{ app.status }}</strong><br>
+            <form method="POST" action="{{ url_for('company_update_application', application_id=app.id) }}">
+                <select name="status">
+                    <option value="Applied" {% if app.status == 'Applied' %}selected{% endif %}>Applied</option>
+                    <option value="Shortlisted" {% if app.status == 'Shortlisted' %}selected{% endif %}>Shortlisted</option>
+                    <option value="Selected" {% if app.status == 'Selected' %}selected{% endif %}>Selected</option>
+                    <option value="Rejected" {% if app.status == 'Rejected' %}selected{% endif %}>Rejected</option>
+                </select>
+                <button type="submit">Update</button>
+            </form>
+        </p>
+        <hr>
+    {% endfor %}
+{% else %}
+    <p>No applications yet.</p>
+{% endif %}
+
+{% endblock body %}

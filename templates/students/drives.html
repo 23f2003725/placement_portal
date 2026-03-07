@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block body %}
+<h1>Available Drives</h1>
+<a href="{{ url_for('student_dashboard') }}">Back to Dashboard</a>
+<hr>
+
+{% if drives %}
+    {% for drive in drives %}
+        <p>
+            <strong>{{ drive.job_title }}</strong> at {{ drive.company.company_name }}<br>
+            Package: {{ drive.package }} | Location: {{ drive.location }} | Deadline: {{ drive.deadline }}<br>
+            Eligibility: {{ drive.eligibility }}<br>
+            {% if drive.id in applied_ids %}
+                <em>Already Applied</em>
+            {% else %}
+                <form method="POST" action="{{ url_for('student_apply', drive_id=drive.id) }}">
+                    <button type="submit">Apply</button>
+                </form>
+            {% endif %}
+        </p>
+        <hr>
+    {% endfor %}
+{% else %}
+    <p>No drives available right now.</p>
+{% endif %}
+
+{% endblock body %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block body %}
+<h1>Company Profile</h1>
+<a href="{{ url_for('company_dashboard') }}">Back to Dashboard</a>
+<hr>
+
+<form method="POST">
+    <label>Company Name</label><br>
+    <input type="text" name="company_name" value="{{ company.company_name }}"><br><br>
+
+    <label>Email</label><br>
+    <input type="email" name="email" value="{{ company.email }}"><br><br>
+
+    <label>HR Contact</label><br>
+    <input type="text" name="hr_contact" value="{{ company.hr_contact or '' }}"><br><br>
+
+    <label>Website</label><br>
+    <input type="text" name="website" value="{{ company.website or '' }}"><br><br>
+
+    <label>Description</label><br>
+    <textarea name="description">{{ company.description or '' }}</textarea><br><br>
+
+    <button type="submit">Save</button>
+</form>
+
+{% endblock body %}

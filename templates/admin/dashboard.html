@@ -1,18 +1,57 @@
 {% extends "base.html" %}
 
 {% block body %}
-    <h1>Admin Dashboard</h1>
-    <p>
-        Registered Students: <strong>{{ students | length }}</strong> &nbsp;|&nbsp;
-        Registered Companies: <strong>{{ companies | length }}</strong>
-    </p>
+<h1>Admin Dashboard</h1>
 
-    <nav>
-        <a href="/admin/drives">Manage Placement Drives</a>
-        <a href="/admin/applications">View Student Applications</a>
-        <a href="/admin/companies">Manage Companies</a>
-        <a href="/admin/students">Manage Students</a>
-        <a href="/admin/reports">Generate Reports</a>
-        <a href="{{ url_for('admin_logout') }}">Logout</a>
-    </nav>
+<a href="{{ url_for('admin_companies') }}">Companies</a> |
+<a href="{{ url_for('admin_drives') }}">Drives</a> |
+<a href="{{ url_for('admin_students') }}">Students</a> |
+<a href="{{ url_for('admin_applications') }}">Applications</a> |
+<a href="{{ url_for('admin_logout') }}">Logout</a>
+
+<hr>
+
+<p>Total Students: {{ total_students }}</p>
+<p>Total Companies: {{ total_companies }}</p>
+<p>Total Drives: {{ total_drives }}</p>
+<p>Total Applications: {{ total_apps }}</p>
+
+<hr>
+
+<h2>Pending Companies</h2>
+{% if pending_companies %}
+    {% for company in pending_companies %}
+        <p>
+            <strong>{{ company.company_name }}</strong> | {{ company.email }}<br>
+            <form method="POST" action="{{ url_for('approved_companies', company_id=company.id) }}" style="display:inline;">
+                <button type="submit">Approve</button>
+            </form>
+            <form method="POST" action="{{ url_for('rejected_companies', company_id=company.id) }}" style="display:inline;">
+                <button type="submit">Reject</button>
+            </form>
+        </p>
+        <hr>
+    {% endfor %}
+{% else %}
+    <p>No pending companies.</p>
+{% endif %}
+
+<h2>Pending Drives</h2>
+{% if pending_drives %}
+    {% for drive in pending_drives %}
+        <p>
+            <strong>{{ drive.job_title }}</strong> by {{ drive.company.company_name }} | Deadline: {{ drive.deadline }}<br>
+            <form method="POST" action="{{ url_for('approved_drives', drive_id=drive.id) }}" style="display:inline;">
+                <button type="submit">Approve</button>
+            </form>
+            <form method="POST" action="{{ url_for('rejected_drives', drive_id=drive.id) }}" style="display:inline;">
+                <button type="submit">Reject</button>
+            </form>
+        </p>
+        <hr>
+    {% endfor %}
+{% else %}
+    <p>No pending drives.</p>
+{% endif %}
+
 {% endblock body %}

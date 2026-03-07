@@ -1,17 +1,32 @@
 {% extends "base.html" %}
 
 {% block body %}
-    <h1>Company Dashboard</h1>
-    {% if company %}
-        <p>Welcome, <strong>{{ company.name }}</strong></p>
-    {% endif %}
+<h1>Welcome, {{ company.company_name }}</h1>
 
-    <nav>
-        <a href="/company/profile">Company Profile</a>
-        <a href="/company/create-drive">Create Placement Drive</a>
-        <a href="/company/my-drives">View My Drives</a>
-        <a href="/company/applications">View Student Applications</a>
-        <a href="/company/shortlist">Shortlist Candidates</a>
-        <a href="{{ url_for('company_logout') }}">Logout</a>
-    </nav>
+<a href="{{ url_for('company_profile') }}">Profile</a> |
+<a href="{{ url_for('company_create_drive') }}">Create Drive</a> |
+<a href="{{ url_for('company_logout') }}">Logout</a>
+
+<hr>
+
+<h2>Your Drives</h2>
+{% if drives %}
+    {% for drive in drives %}
+        <p>
+            <strong>{{ drive.job_title }}</strong> | Status: {{ drive.status }} | Deadline: {{ drive.deadline }}<br>
+            <a href="{{ url_for('company_edit_drive', drive_id=drive.id) }}">Edit</a> |
+            <a href="{{ url_for('company_view_applications', drive_id=drive.id) }}">Applications</a> |
+            <form method="POST" action="{{ url_for('company_close_drive', drive_id=drive.id) }}" style="display:inline;">
+                <button type="submit">Close</button>
+            </form> |
+            <form method="POST" action="{{ url_for('company_delete_drive', drive_id=drive.id) }}" style="display:inline;">
+                <button type="submit">Delete</button>
+            </form>
+        </p>
+        <hr>
+    {% endfor %}
+{% else %}
+    <p>No drives created yet.</p>
+{% endif %}
+
 {% endblock body %}

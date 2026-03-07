@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block body %}
+<h1>My Profile</h1>
+<a href="{{ url_for('student_dashboard') }}">Back to Dashboard</a>
+<hr>
+
+<form method="POST" enctype="multipart/form-data">
+    <label>Full Name</label><br>
+    <input type="text" name="full_name" value="{{ student.full_name }}"><br><br>
+
+    <label>Email</label><br>
+    <input type="email" name="email" value="{{ student.email }}"><br><br>
+
+    <label>Phone</label><br>
+    <input type="text" name="phone" value="{{ student.phone or '' }}"><br><br>
+
+    <label>Department</label><br>
+    <input type="text" name="department" value="{{ student.department or '' }}"><br><br>
+
+    <label>CGPA</label><br>
+    <input type="number" step="0.01" name="cgpa" value="{{ student.cgpa or '' }}"><br><br>
+
+    <label>Graduation Year</label><br>
+    <input type="number" name="graduation_year" value="{{ student.graduation_year or '' }}"><br><br>
+
+    <label>Resume (PDF)</label><br>
+    {% if student.resume_file %}
+        <p>Current: {{ student.resume_file }}</p>
+    {% endif %}
+    <input type="file" name="resume" accept=".pdf"><br><br>
+
+    <button type="submit">Save</button>
+</form>
+
+{% endblock body %}

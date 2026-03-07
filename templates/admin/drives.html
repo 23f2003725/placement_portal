@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block body %}
+<h1>All Drives</h1>
+<a href="{{ url_for('admin_dashboard') }}">Back to Dashboard</a>
+<hr>
+
+{% if drives %}
+    {% for drive in drives %}
+        <p>
+            <strong>{{ drive.job_title }}</strong> by {{ drive.company.company_name }}<br>
+            Status: {{ drive.status }} | Deadline: {{ drive.deadline }}<br>
+            <form method="POST" action="{{ url_for('approved_drives', drive_id=drive.id) }}" style="display:inline;">
+                <button type="submit">Approve</button>
+            </form>
+            <form method="POST" action="{{ url_for('rejected_drives', drive_id=drive.id) }}" style="display:inline;">
+                <button type="submit">Reject</button>
+            </form>
+            <form method="POST" action="{{ url_for('deleted_drives', drive_id=drive.id) }}" style="display:inline;">
+                <button type="submit">Delete</button>
+            </form>
+        </p>
+        <hr>
+    {% endfor %}
+{% else %}
+    <p>No drives found.</p>
+{% endif %}
+
+{% endblock body %}
