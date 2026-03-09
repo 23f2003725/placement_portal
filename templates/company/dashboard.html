@@ -1,32 +1,44 @@
 {% extends "base.html" %}
 
 {% block body %}
-<h1>Welcome, {{ company.company_name }}</h1>
 
-<a href="{{ url_for('company_profile') }}">Profile</a> |
-<a href="{{ url_for('company_create_drive') }}">Create Drive</a> |
-<a href="{{ url_for('company_logout') }}">Logout</a>
+<h2>🏢 Welcome, {{ company.company_name }}</h2>
+<div class="mb-3">
+    <a href="{{ url_for('profile_company') }}" class="btn btn-outline-primary btn-sm">Profile</a>
+    <a href="{{ url_for('post_drive') }}" class="btn btn-success btn-sm">+ New Drive</a>
+    <a href="{{ url_for('logout_company') }}" class="btn btn-outline-danger btn-sm">Logout</a>
+</div>
 
 <hr>
 
-<h2>Your Drives</h2>
+<h4>Your Drives</h4>
 {% if drives %}
     {% for drive in drives %}
-        <p>
-            <strong>{{ drive.job_title }}</strong> | Status: {{ drive.status }} | Deadline: {{ drive.deadline }}<br>
-            <a href="{{ url_for('company_edit_drive', drive_id=drive.id) }}">Edit</a> |
-            <a href="{{ url_for('company_view_applications', drive_id=drive.id) }}">Applications</a> |
-            <form method="POST" action="{{ url_for('company_close_drive', drive_id=drive.id) }}" style="display:inline;">
-                <button type="submit">Close</button>
-            </form> |
-            <form method="POST" action="{{ url_for('company_delete_drive', drive_id=drive.id) }}" style="display:inline;">
-                <button type="submit">Delete</button>
-            </form>
+    <div class="card mb-3 p-3">
+        <h6>{{ drive.job_title }}</h6>
+        <p class="text-muted mb-2">⏰ Deadline: {{ drive.deadline }} | Status:
+            <span class="badge
+                {% if drive.status == 'Approved' %}bg-success
+                {% elif drive.status == 'Rejected' %}bg-danger
+                {% elif drive.status == 'Closed' %}bg-secondary
+                {% else %}bg-warning text-dark{% endif %}">
+                {{ drive.status }}
+            </span>
         </p>
-        <hr>
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="{{ url_for('modify_drive', drive_id=drive.id) }}" class="btn btn-outline-primary btn-sm">Edit</a>
+            <a href="{{ url_for('drive_applicants', drive_id=drive.id) }}" class="btn btn-outline-secondary btn-sm">Applicants</a>
+            <form method="POST" action="{{ url_for('close_drive', drive_id=drive.id) }}">
+                <button type="submit" class="btn btn-warning btn-sm">Close</button>
+            </form>
+            <form method="POST" action="{{ url_for('remove_drive', drive_id=drive.id) }}">
+                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+            </form>
+        </div>
+    </div>
     {% endfor %}
 {% else %}
-    <p>No drives created yet.</p>
+    <p class="text-muted">No drives created yet. Click "+ New Drive" to get started.</p>
 {% endif %}
 
 {% endblock body %}

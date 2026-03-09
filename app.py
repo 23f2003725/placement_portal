@@ -16,73 +16,73 @@ app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(__file__), 'static', 
 db = SQLAlchemy(app)
 
 
-# MODELS ---------------------
+# ─── MODELS
 
 class Admin(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id       = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
 
 
 class Student(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100), unique=True, nullable=False)
-    password = db.Column(db.String(200), nullable=False)
-    email = db.Column(db.String(100), unique=True, nullable=False)
-    full_name = db.Column(db.String(100), nullable=False)
-    phone = db.Column(db.String(20))
-    department = db.Column(db.String(100))
-    cgpa = db.Column(db.Float)
+    id              = db.Column(db.Integer, primary_key=True)
+    username        = db.Column(db.String(100), unique=True, nullable=False)
+    password        = db.Column(db.String(200), nullable=False)
+    email           = db.Column(db.String(100), unique=True, nullable=False)
+    full_name       = db.Column(db.String(100), nullable=False)
+    phone           = db.Column(db.String(20))
+    department      = db.Column(db.String(100))
+    cgpa            = db.Column(db.Float)
     graduation_year = db.Column(db.Integer)
-    resume_file = db.Column(db.String(200))
-    is_active = db.Column(db.Boolean, default=True)
-    applications = db.relationship('Application', backref='student', lazy=True)
+    resume_file     = db.Column(db.String(200))
+    is_active       = db.Column(db.Boolean, default=True)
+    applications    = db.relationship('Application', backref='student', lazy=True)
 
 
 class Company(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100), unique=True, nullable=False)
-    password = db.Column(db.String(200), nullable=False)
-    company_name = db.Column(db.String(200), nullable=False)
-    email = db.Column(db.String(120), nullable=False)
-    hr_contact = db.Column(db.String(120))
-    website = db.Column(db.String(200))
-    description = db.Column(db.Text)
+    id              = db.Column(db.Integer, primary_key=True)
+    username        = db.Column(db.String(100), unique=True, nullable=False)
+    password        = db.Column(db.String(200), nullable=False)
+    company_name    = db.Column(db.String(200), nullable=False)
+    email           = db.Column(db.String(120), nullable=False)
+    hr_contact      = db.Column(db.String(120))
+    website         = db.Column(db.String(200))
+    description     = db.Column(db.Text)
     approval_status = db.Column(db.String(20), default='Pending')
-    drives = db.relationship('PlacementDrive', backref='company', lazy=True)
+    drives          = db.relationship('PlacementDrive', backref='company', lazy=True)
 
 
 class PlacementDrive(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    company_id = db.Column(db.Integer, db.ForeignKey('company.id'), nullable=False)
-    job_title = db.Column(db.String(200), nullable=False)
-    description = db.Column(db.Text)
-    eligibility = db.Column(db.Text)
-    package = db.Column(db.String(100))
-    location = db.Column(db.String(100))
-    status = db.Column(db.String(20), default='Pending')
-    deadline = db.Column(db.String(100), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    id           = db.Column(db.Integer, primary_key=True)
+    company_id   = db.Column(db.Integer, db.ForeignKey('company.id'), nullable=False)
+    job_title    = db.Column(db.String(200), nullable=False)
+    description  = db.Column(db.Text)
+    eligibility  = db.Column(db.Text)
+    package      = db.Column(db.String(100))
+    location     = db.Column(db.String(100))
+    status       = db.Column(db.String(20), default='Pending')
+    deadline     = db.Column(db.String(100), nullable=False)
+    created_at   = db.Column(db.DateTime, default=datetime.utcnow)
     applications = db.relationship('Application', backref='drive', lazy=True)
 
 
 class Application(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
-    drive_id = db.Column(db.Integer, db.ForeignKey('placement_drive.id'), nullable=False)
-    status = db.Column(db.String(20), default='Applied')
+    id           = db.Column(db.Integer, primary_key=True)
+    student_id   = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
+    drive_id     = db.Column(db.Integer, db.ForeignKey('placement_drive.id'), nullable=False)
+    status       = db.Column(db.String(20), default='Applied')
     applied_date = db.Column(db.DateTime, default=datetime.utcnow)
 
 
-# HELPERS ---------------------
+# ─── DECORATORS
 
 def student_required(f):
     from functools import wraps
     @wraps(f)
     def wrapper(*args, **kwargs):
-        if 'student_id' not in session:
+        if 'sid' not in session:
             flash("Please login first.", "warning")
-            return redirect(url_for('student_login'))
+            return redirect(url_for('login_student'))
         return f(*args, **kwargs)
     return wrapper
 
@@ -91,9 +91,9 @@ def company_required(f):
     from functools import wraps
     @wraps(f)
     def wrapper(*args, **kwargs):
-        if 'company_id' not in session:
+        if 'cid' not in session:
             flash("Please login first.", "warning")
-            return redirect(url_for('company_login'))
+            return redirect(url_for('login_company'))
         return f(*args, **kwargs)
     return wrapper
 
@@ -102,474 +102,513 @@ def admin_required(f):
     from functools import wraps
     @wraps(f)
     def wrapper(*args, **kwargs):
-        if 'admin_id' not in session:
+        if 'aid' not in session:
             flash("Admin login required.", "warning")
-            return redirect(url_for('admin_login'))
+            return redirect(url_for('login_admin'))
         return f(*args, **kwargs)
     return wrapper
 
 
-def get_company_drive(drive_id):
-    drive = PlacementDrive.query.get_or_404(drive_id)
-    if drive.company_id != session['company_id']:
+# ─── HELPER
+
+def fetch_drive(drive_id):
+    record = PlacementDrive.query.get_or_404(drive_id)
+    if record.company_id != session['cid']:
         flash("Access denied.", "danger")
         return None
-    return drive
+    return record
 
 
-# HOME ROUTE
-
+# ─── HOME
 @app.route('/')
 def home():
     return render_template('index.html')
 
 
-# STUDENT ROUTES ----------------------
+# ─── STUDENT
 
-@app.route('/students')
-def student_home():
-    return render_template('students/index.html')
-
-
-@app.route('/students/register', methods=['GET', 'POST'])
-def student_register():
-
+@app.route('/student/signup', methods=['GET', 'POST'])
+def register_student():
     if request.method == 'POST':
-        username = request.form['username']
-        email = request.form['email']
+        username  = request.form['username']
+        email     = request.form['email']
         full_name = request.form['full_name']
-        password = request.form['password']
+        password  = request.form['password']
         if Student.query.filter_by(username=username).first():
-            flash("Username already exists", "danger")
-            return render_template("students/register.html")
-        new_student = Student(username=username, email=email, full_name=full_name, password=generate_password_hash(password))
-        db.session.add(new_student)
+            flash("Username already exists.", "danger")
+            return render_template('students/register.html')
+        s          = Student()
+        s.username  = username
+        s.email     = email
+        s.full_name = full_name
+        s.password  = generate_password_hash(password)
+        db.session.add(s)
         db.session.commit()
         flash("Registration successful! Please login.", "success")
-        return redirect(url_for('student_login'))
+        return redirect(url_for('login_student'))
     return render_template('students/register.html')
 
 
-@app.route('/students/login', methods=['GET', 'POST'])
-def student_login():
+@app.route('/student/signin', methods=['GET', 'POST'])
+def login_student():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        user = Student.query.filter_by(username=username).first()
-        if user and check_password_hash(user.password, password):
-            if not user.is_active:
-                flash("your account is disabled", "danger")
-                return render_template("students/login.html")
-            session['student_id'] = user.id
-            session['full_name'] = user.full_name
-            return redirect(url_for('student_dashboard'))
-        flash("Invalid credentials", "danger")
+        s = Student.query.filter_by(username=username).first()
+        if s and check_password_hash(s.password, password):
+            if not s.is_active:
+                flash("Your account is disabled. Contact admin.", "danger")
+                return render_template('students/login.html')
+            session['sid']   = s.id
+            session['sname'] = s.full_name
+            return redirect(url_for('dashboard_student'))
+        flash("Invalid credentials.", "danger")
     return render_template('students/login.html')
 
 
-@app.route('/students/logout')
-def student_logout():
+@app.route('/student/signout')
+def logout_student():
     session.clear()
-    return redirect(url_for('student_login'))
+    return redirect(url_for('login_student'))
 
 
-@app.route('/students/dashboard')
+@app.route('/student/home')
 @student_required
-def student_dashboard():
-    student = Student.query.get(session['student_id'])
-    applications = Application.query.filter_by(student_id=student.id).all()
-    approved_drives = PlacementDrive.query.filter_by(status="Approved").all()
-    applied_ids = {a.drive_id for a in applications}
+def dashboard_student():
+    s            = Student.query.get(session['sid'])
+    apps         = Application.query.filter_by(student_id=s.id).all()
+    open_drives  = PlacementDrive.query.filter_by(status='Approved').all()
+    applied_ids  = {a.drive_id for a in apps}
+    return render_template('students/dashboard.html', student=s, applications=apps, drives=open_drives, applied_drive_ids=applied_ids)
 
-    return render_template('students/dashboard.html', student=student, applications=applications, drives=approved_drives, applied_drive_ids=applied_ids)
 
-@app.route('/students/drives')
+@app.route('/student/openings')
 @student_required
-def view_drives():
-    drives = PlacementDrive.query.filter_by(status='Approved').all()
-    student = Student.query.get(session['student_id'])
-    applied_ids = {a.drive_id for a in student.applications}
-    return render_template('students/drives.html', drives=drives, applied_ids=applied_ids)
+def browse_drives():
+    open_drives = PlacementDrive.query.filter_by(status='Approved').all()
+    s           = Student.query.get(session['sid'])
+    applied_ids = {a.drive_id for a in s.applications}
+    return render_template('students/drives.html', drives=open_drives, applied_ids=applied_ids)
 
-@app.route('/students/apply/<int:drive_id>', methods=['POST'])
+
+@app.route('/student/submit/<int:drive_id>', methods=['POST'])
 @student_required
-def student_apply(drive_id):
-    student_id = session['student_id']
+def apply_to_drive(drive_id):
+    sid   = session['sid']
     drive = PlacementDrive.query.get_or_404(drive_id)
     if drive.status != 'Approved':
-        flash('This drive is not open.', 'danger')
-        return redirect(url_for('view_drives'))
-    if Application.query.filter_by(student_id=student_id, drive_id=drive_id).first():
-        flash('Already applied.', 'warning')
-        return redirect(url_for('view_drives'))
-    db.session.add(Application(student_id=student_id, drive_id=drive_id))
+        flash("This drive is not open.", "danger")
+        return redirect(url_for('browse_drives'))
+    if Application.query.filter_by(student_id=sid, drive_id=drive_id).first():
+        flash("Already applied.", "warning")
+        return redirect(url_for('browse_drives'))
+    db.session.add(Application(student_id=sid, drive_id=drive_id))
     db.session.commit()
-    flash('Application submitted!', 'success')
-    return redirect(url_for('student_dashboard'))
+    flash("Application submitted!", "success")
+    return redirect(url_for('dashboard_student'))
 
-@app.route('/students/profile', methods=['GET', 'POST'])
+
+@app.route('/student/account', methods=['GET', 'POST'])
 @student_required
-def student_profile():
-    student = Student.query.get(session['student_id'])
+def profile_student():
+    s = Student.query.get(session['sid'])
     if request.method == 'POST':
-        student.full_name       = request.form.get('full_name', student.full_name)
-        student.email           = request.form.get('email', student.email)
-        student.phone           = request.form.get('phone')
-        student.department      = request.form.get('department')
-        cgpa = request.form.get('cgpa')
-        student.cgpa = float(cgpa) if cgpa else student.cgpa
-        gy = request.form.get('graduation_year')
-        student.graduation_year = int(gy) if gy else student.graduation_year
+        s.full_name       = request.form.get('full_name', s.full_name)
+        s.email           = request.form.get('email', s.email)
+        s.phone           = request.form.get('phone')
+        s.department      = request.form.get('department')
+        cgpa              = request.form.get('cgpa')
+        s.cgpa            = float(cgpa) if cgpa else s.cgpa
+        gy                = request.form.get('graduation_year')
+        s.graduation_year = int(gy) if gy else s.graduation_year
         resume = request.files.get('resume')
         if resume and resume.filename:
             os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-            filename = f"student_{student.id}_{resume.filename}"
+            filename      = f"student_{s.id}_{resume.filename}"
             resume.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            student.resume_file = filename
+            s.resume_file = filename
         db.session.commit()
-        session['full_name'] = student.full_name
-        flash('Profile updated!', 'success')
-    return render_template('students/profile.html', student=student)
+        session['sname'] = s.full_name
+        flash("Profile updated!", "success")
+    return render_template('students/profile.html', student=s)
 
-@app.route('/students/history')
+
+@app.route('/student/records')
 @student_required
-def student_history():
-    apps = Application.query.filter_by(student_id=session['student_id']).all()
+def application_history():
+    apps = Application.query.filter_by(student_id=session['sid']).all()
     return render_template('students/history.html', applications=apps)
 
 
-
-# COMPANY ROUTES ----------------------
+# ─── COMPANY
 
 @app.route('/company')
-def company_home():
+def company_portal():
     return render_template('company/index.html')
 
 
-@app.route('/company/register', methods=['GET', 'POST'])
-def company_register():
+@app.route('/company/signup', methods=['GET', 'POST'])
+def register_company():
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+        username     = request.form['username']
+        password     = request.form['password']
         company_name = request.form['company_name']
-        email = request.form['email']
+        email        = request.form['email']
         if Company.query.filter_by(username=username).first():
-            flash("Username already exists", "danger")
-            return render_template("company/register.html")
-        company = Company(username=username, password=generate_password_hash(password), company_name=company_name, email=email)
-        db.session.add(company)
+            flash("Username already exists.", "danger")
+            return render_template('company/register.html')
+        c              = Company()
+        c.username     = username
+        c.password     = generate_password_hash(password)
+        c.company_name = company_name
+        c.email        = email
+        c.hr_contact   = request.form.get('hr_contact', '')
+        c.website      = request.form.get('website', '')
+        db.session.add(c)
         db.session.commit()
-        flash("Registration successful", "success")
-        return redirect(url_for('company_login'))
+        flash("Registration successful! Await admin approval.", "success")
+        return redirect(url_for('login_company'))
     return render_template('company/register.html')
 
 
-@app.route('/company/login', methods=['GET', 'POST'])
-def company_login():
+@app.route('/company/signin', methods=['GET', 'POST'])
+def login_company():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        company = Company.query.filter_by(username=username).first()
-        if company and check_password_hash(company.password, password):
-            if company.approval_status == 'Pending':
-                flash('Pending admin approval.', 'warning')
+        c = Company.query.filter_by(username=username).first()
+        if c and check_password_hash(c.password, password):
+            if c.approval_status == 'Pending':
+                flash("Your account is pending admin approval.", "warning")
                 return render_template('company/login.html')
-            if company.approval_status in ('Rejected', 'Blacklisted'):
-                flash(f'Account {company.approval_status.lower()}. Contact admin.', 'danger')
+            if c.approval_status in ('Rejected', 'Blacklisted'):
+                flash(f"Account {c.approval_status.lower()}. Contact admin.", "danger")
                 return render_template('company/login.html')
-            session['company_id'] = company.id
-            session['company_name'] = company.company_name
-            return redirect(url_for('company_dashboard'))
-        flash("Invalid credentials", "danger")
+            session['cid']   = c.id
+            session['cname'] = c.company_name
+            return redirect(url_for('dashboard_company'))
+        flash("Invalid credentials.", "danger")
     return render_template('company/login.html')
 
 
-@app.route('/company/dashboard')
-@company_required
-def company_dashboard():
-    company = Company.query.get(session['company_id'])
-    drives = PlacementDrive.query.filter_by(company_id=company.id).all()
-    return render_template('company/dashboard.html', company=company, drives=drives)
-
-@app.route('/company/logout')
-def company_logout():
+@app.route('/company/signout')
+def logout_company():
     session.clear()
-    return redirect(url_for('company_login'))
+    return redirect(url_for('login_company'))
 
-@app.route('/company/profile', methods=['GET', 'POST'])
+
+@app.route('/company/home')
 @company_required
-def company_profile():
-    company = Company.query.get(session['company_id'])
+def dashboard_company():
+    c      = Company.query.get(session['cid'])
+    drives = PlacementDrive.query.filter_by(company_id=c.id).all()
+    return render_template('company/dashboard.html', company=c, drives=drives)
+
+
+@app.route('/company/account', methods=['GET', 'POST'])
+@company_required
+def profile_company():
+    c = Company.query.get(session['cid'])
     if request.method == 'POST':
-        company.company_name = request.form['company_name']
-        company.email = request.form['email']
-        company.hr_contact = request.form.get('hr_contact')
-        company.website = request.form.get('website')
-        company.description = request.form.get('description')
+        c.company_name = request.form.get('company_name', c.company_name)
+        c.email        = request.form.get('email', c.email)
+        c.hr_contact   = request.form.get('hr_contact', c.hr_contact)
+        c.website      = request.form.get('website', c.website)
+        c.description  = request.form.get('description', c.description)
         db.session.commit()
-        flash("Profile updated successfully", "success")
-        return redirect(url_for('company_profile'))
-    return render_template("company/profile.html", company=company)
+        session['cname'] = c.company_name
+        flash("Profile updated!", "success")
+    return render_template('company/profile.html', company=c)
 
-@app.route('/company/drives/create', methods=['GET', 'POST'])
+
+@app.route('/company/drive/new', methods=['GET', 'POST'])
 @company_required
-def company_create_drive():
+def post_drive():
     if request.method == 'POST':
-        drive = PlacementDrive(
-            company_id=session['company_id'],
-            job_title=request.form['job_title'],
-            description=request.form.get('description'),
-            eligibility=request.form.get('eligibility'),
-            package=request.form.get('package'),
-            location=request.form.get('location'),
-            deadline=request.form.get('deadline')
-        )
-        db.session.add(drive)
+        d             = PlacementDrive()
+        d.company_id  = session['cid']
+        d.job_title   = request.form['job_title']
+        d.description = request.form.get('description', '')
+        d.eligibility = request.form.get('eligibility', '')
+        d.package     = request.form.get('package', '')
+        d.location    = request.form.get('location', '')
+        d.deadline    = request.form.get('deadline', '')
+        db.session.add(d)
         db.session.commit()
-        flash("Drive created successfully", "success")
-        return redirect(url_for('company_dashboard'))
-    return render_template("company/create_drive.html")
+        flash("Drive submitted for admin approval.", "success")
+        return redirect(url_for('dashboard_company'))
+    return render_template('company/create_drive.html')
 
-@app.route('/company/drives/edit/<int:drive_id>', methods=['GET', 'POST'])
+
+@app.route('/company/drive/update/<int:drive_id>', methods=['GET', 'POST'])
 @company_required
-def company_edit_drive(drive_id):
-    drive = get_company_drive(drive_id)
-    if not drive:
-        return redirect(url_for('company_dashboard'))
+def modify_drive(drive_id):
+    d = fetch_drive(drive_id)
+    if not d:
+        return redirect(url_for('dashboard_company'))
     if request.method == 'POST':
-        drive.job_title = request.form['job_title']
-        drive.description = request.form.get('description')
-        drive.eligibility = request.form.get('eligibility')
-        drive.package = request.form.get('package')
-        drive.location = request.form.get('location')
-        drive.deadline = request.form.get('deadline')
-        drive.status = 'Pending'
+        d.job_title   = request.form['job_title']
+        d.description = request.form.get('description', '')
+        d.eligibility = request.form.get('eligibility', '')
+        d.package     = request.form.get('package', '')
+        d.location    = request.form.get('location', '')
+        d.deadline    = request.form.get('deadline', '')
+        d.status      = 'Pending'
         db.session.commit()
-        flash("Drive updated successfully", "success")
-        return redirect(url_for('company_dashboard'))
-    return render_template("company/edit_drive.html", drive=drive)
+        flash("Drive updated and re-submitted for approval.", "success")
+        return redirect(url_for('dashboard_company'))
+    return render_template('company/edit_drive.html', drive=d)
 
-@app.route('/company/drives/delete/<int:drive_id>', methods=['POST'])
+
+@app.route('/company/drive/remove/<int:drive_id>', methods=['POST'])
 @company_required
-def company_delete_drive(drive_id):
-    drive = get_company_drive(drive_id)
-    if not drive:
-        return redirect(url_for('company_dashboard'))
-    Application.query.filter_by(drive_id=drive.id).delete()
-    db.session.delete(drive)
+def remove_drive(drive_id):
+    d = fetch_drive(drive_id)
+    if not d:
+        return redirect(url_for('dashboard_company'))
+    Application.query.filter_by(drive_id=d.id).delete()
+    db.session.delete(d)
     db.session.commit()
-    flash("Drive deleted successfully", "success")
-    return redirect(url_for('company_dashboard'))
+    flash("Drive deleted.", "success")
+    return redirect(url_for('dashboard_company'))
 
-@app.route('/company/drives/close/<int:drive_id>', methods=['POST'])
+
+@app.route('/company/drive/close/<int:drive_id>', methods=['POST'])
 @company_required
-def company_close_drive(drive_id):
-    drive = get_company_drive(drive_id)
-    if not drive:
-        return redirect(url_for('company_dashboard'))
-    drive.status = "Closed"
+def close_drive(drive_id):
+    d = fetch_drive(drive_id)
+    if not d:
+        return redirect(url_for('dashboard_company'))
+    d.status = 'Closed'
     db.session.commit()
-    flash("Drive closed successfully", "success")
-    return redirect(url_for('company_dashboard'))
+    flash("Drive closed.", "success")
+    return redirect(url_for('dashboard_company'))
 
-@app.route('/company/drives/applications/<int:drive_id>')
+
+@app.route('/company/drive/applicants/<int:drive_id>')
 @company_required
-def company_view_applications(drive_id):
-    drive = get_company_drive(drive_id)
-    if not drive:
-        return redirect(url_for('company_dashboard'))
-    applications = Application.query.filter_by(drive_id=drive.id).all()
-    return render_template("company/applications.html", drive=drive, applications=applications)
+def drive_applicants(drive_id):
+    d    = fetch_drive(drive_id)
+    if not d:
+        return redirect(url_for('dashboard_company'))
+    apps = Application.query.filter_by(drive_id=d.id).all()
+    return render_template('company/applications.html', drive=d, applications=apps)
 
-@app.route('/company/drives/applications/update/<int:application_id>', methods=['POST'])
+
+@app.route('/company/applicant/update/<int:app_id>', methods=['POST'])
 @company_required
-def company_update_application(application_id):
-    application = Application.query.get_or_404(application_id)
-    drive = get_company_drive(application.drive_id)
-    if not drive:
-        return redirect(url_for('company_dashboard'))
-    new_status = request.form['status']
-    if new_status not in ['Applied', 'Shortlisted', 'Selected', 'Rejected']:
-        flash("Invalid status", "danger")
-        return redirect(url_for('company_view_applications', drive_id=drive.id))
-    application.status = new_status
-    db.session.commit()
-    flash("Application status updated", "success")
-    return redirect(url_for('company_view_applications', drive_id=drive.id))
+def update_applicant_status(app_id):
+    app_record = Application.query.get_or_404(app_id)
+    d          = fetch_drive(app_record.drive_id)
+    if not d:
+        return redirect(url_for('dashboard_company'))
+    new_status = request.form.get('status')
+    if new_status in ('Applied', 'Shortlisted', 'Selected', 'Rejected'):
+        app_record.status = new_status
+        db.session.commit()
+        flash("Status updated.", "success")
+    else:
+        flash("Invalid status.", "danger")
+    return redirect(url_for('drive_applicants', drive_id=d.id))
 
 
-
-# ADMIN ROUTES -------------------
-
+# ─── ADMIN
 
 @app.route('/admin')
-def admin_home():
+def admin_portal():
     return render_template('admin/index.html')
 
-@app.route('/admin/login', methods=['GET', 'POST'])
-def admin_login():
+
+@app.route('/admin/signin', methods=['GET', 'POST'])
+def login_admin():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
         admin = Admin.query.filter_by(username=username).first()
         if admin and check_password_hash(admin.password, password):
-            session['admin_id'] = admin.id
-            return redirect(url_for('admin_dashboard'))
-        flash("Invalid credentials", "danger")
+            session['aid'] = admin.id
+            return redirect(url_for('dashboard_admin'))
+        flash("Invalid credentials.", "danger")
     return render_template('admin/login.html')
 
-@app.route('/admin/logout')
-def admin_logout():
-    session.clear()
-    return redirect(url_for('admin_login'))
 
-@app.route('/admin/dashboard')
+@app.route('/admin/signout')
+def logout_admin():
+    session.clear()
+    return redirect(url_for('login_admin'))
+
+
+@app.route('/admin/home')
 @admin_required
-def admin_dashboard():
+def dashboard_admin():
     return render_template('admin/dashboard.html',
-        total_students  = Student.query.count(),
-        total_companies = Company.query.count(),
-        total_drives    = PlacementDrive.query.count(),
-        total_apps      = Application.query.count(),
+        total_students    = Student.query.count(),
+        total_companies   = Company.query.count(),
+        total_drives      = PlacementDrive.query.count(),
+        total_apps        = Application.query.count(),
         pending_companies = Company.query.filter_by(approval_status='Pending').all(),
         pending_drives    = PlacementDrive.query.filter_by(status='Pending').all()
     )
 
+
 @app.route('/admin/companies')
 @admin_required
-def admin_companies():
+def manage_companies():
     search = request.args.get('search', '')
-    q = Company.query
+    q      = Company.query
     if search:
         q = q.filter(Company.company_name.ilike(f'%{search}%') | Company.username.ilike(f'%{search}%'))
     return render_template('admin/companies.html', companies=q.all(), search=search)
 
-@app.route('/admin/companies/approve/<int:company_id>', methods=['POST'])
-@admin_required
-def approved_companies(company_id):
-    c = Company.query.get_or_404(company_id)
-    c.approval_status = 'Approved'
-    db.session.commit()
-    flash(f'{c.company_name} approved.', 'success')
-    return redirect(url_for('admin_companies'))
 
-@app.route('/admin/companies/reject/<int:company_id>', methods=['POST'])
+@app.route('/admin/company/approve/<int:company_id>', methods=['POST'])
 @admin_required
-def rejected_companies(company_id):
-    c = Company.query.get_or_404(company_id)
-    c.approval_status = 'Rejected'
+def approve_company(company_id):
+    comp                 = Company.query.get_or_404(company_id)
+    comp.approval_status = 'Approved'
     db.session.commit()
-    flash(f'{c.company_name} rejected.', 'warning')
-    return redirect(url_for('admin_companies'))
+    flash(f'{comp.company_name} approved.', 'success')
+    return redirect(url_for('manage_companies'))
 
-@app.route('/admin/companies/blacklist/<int:company_id>', methods=['POST'])
-@admin_required
-def blacklisted_companies(company_id):
-    c = Company.query.get_or_404(company_id)
-    c.approval_status = 'Blacklisted'
-    db.session.commit()
-    flash(f'{c.company_name} blacklisted.', 'danger')
-    return redirect(url_for('admin_companies'))
 
-@app.route('/admin/companies/delete/<int:company_id>', methods=['POST'])
+@app.route('/admin/company/reject/<int:company_id>', methods=['POST'])
 @admin_required
-def deleted_companies(company_id):
-    c = Company.query.get_or_404(company_id)
-    for d in c.drives:
-        Application.query.filter_by(drive_id=d.id).delete()
-        db.session.delete(d)
-    db.session.delete(c)
+def reject_company(company_id):
+    comp                 = Company.query.get_or_404(company_id)
+    comp.approval_status = 'Rejected'
     db.session.commit()
-    flash('Company deleted.', 'success')
-    return redirect(url_for('admin_companies'))
+    flash(f'{comp.company_name} rejected.', 'warning')
+    return redirect(url_for('manage_companies'))
+
+
+@app.route('/admin/company/blacklist/<int:company_id>', methods=['POST'])
+@admin_required
+def blacklist_company(company_id):
+    comp                 = Company.query.get_or_404(company_id)
+    comp.approval_status = 'Blacklisted'
+    db.session.commit()
+    flash(f'{comp.company_name} blacklisted.', 'danger')
+    return redirect(url_for('manage_companies'))
+
+
+@app.route('/admin/company/delete/<int:company_id>', methods=['POST'])
+@admin_required
+def delete_company(company_id):
+    comp = Company.query.get_or_404(company_id)
+    for drv in comp.drives:
+        Application.query.filter_by(drive_id=drv.id).delete()
+        db.session.delete(drv)
+    db.session.delete(comp)
+    db.session.commit()
+    flash("Company deleted.", "success")
+    return redirect(url_for('manage_companies'))
+
 
 @app.route('/admin/drives')
 @admin_required
-def admin_drives():
+def manage_drives():
     return render_template('admin/drives.html', drives=PlacementDrive.query.all())
 
-@app.route('/admin/drives/approve/<int:drive_id>', methods=['POST'])
-@admin_required
-def approved_drives(drive_id):
-    d = PlacementDrive.query.get_or_404(drive_id)
-    d.status = 'Approved'
-    db.session.commit()
-    flash('Drive approved', 'success')
-    return redirect(url_for('admin_drives'))
 
-@app.route('/admin/drives/reject/<int:drive_id>', methods=['POST'])
+@app.route('/admin/drive/approve/<int:drive_id>', methods=['POST'])
 @admin_required
-def rejected_drives(drive_id):
-    d = PlacementDrive.query.get_or_404(drive_id)
-    d.status = 'Rejected'
+def approve_drive(drive_id):
+    drv        = PlacementDrive.query.get_or_404(drive_id)
+    drv.status = 'Approved'
     db.session.commit()
-    flash('Drive rejected.', 'warning')
-    return redirect(url_for('admin_drives'))
+    flash("Drive approved.", "success")
+    return redirect(url_for('manage_drives'))
 
-@app.route('/admin/drives/delete/<int:drive_id>', methods=['POST'])
+
+@app.route('/admin/drive/reject/<int:drive_id>', methods=['POST'])
 @admin_required
-def deleted_drives(drive_id):
-    d = PlacementDrive.query.get_or_404(drive_id)
+def reject_drive(drive_id):
+    drv        = PlacementDrive.query.get_or_404(drive_id)
+    drv.status = 'Rejected'
+    db.session.commit()
+    flash("Drive rejected.", "warning")
+    return redirect(url_for('manage_drives'))
+
+
+@app.route('/admin/drive/delete/<int:drive_id>', methods=['POST'])
+@admin_required
+def delete_drive(drive_id):
+    drv = PlacementDrive.query.get_or_404(drive_id)
     Application.query.filter_by(drive_id=drive_id).delete()
-    db.session.delete(d)
+    db.session.delete(drv)
     db.session.commit()
-    flash('Drive deleted.', 'success')
-    return redirect(url_for('admin_drives'))
+    flash("Drive deleted.", "success")
+    return redirect(url_for('manage_drives'))
+
 
 @app.route('/admin/students')
 @admin_required
-def admin_students():
+def manage_students():
     search = request.args.get('search', '')
-    q = Student.query
+    q      = Student.query
     if search:
-        filters = [Student.full_name.ilike(f'%{search}%'), Student.username.ilike(f'%{search}%'), Student.email.ilike(f'%{search}%')]
+        from sqlalchemy import or_
+        filters = [
+            Student.full_name.ilike(f'%{search}%'),
+            Student.username.ilike(f'%{search}%'),
+            Student.email.ilike(f'%{search}%')
+        ]
         if search.isdigit():
             filters.append(Student.id == int(search))
-        from sqlalchemy import or_
         q = q.filter(or_(*filters))
     return render_template('admin/students.html', students=q.all(), search=search)
 
-@app.route('/admin/students/blacklist/<int:student_id>', methods=['POST'])
-@admin_required
-def blacklisted_students(student_id):
-    s = Student.query.get_or_404(student_id)
-    s.is_active = False
-    db.session.commit()
-    flash(f'{s.full_name} blacklisted.', 'danger')
-    return redirect(url_for('admin_students'))
 
-@app.route('/admin/students/activate/<int:student_id>', methods=['POST'])
+@app.route('/admin/student/blacklist/<int:student_id>', methods=['POST'])
 @admin_required
-def activated_students(student_id):
-    s = Student.query.get_or_404(student_id)
-    s.is_active = True
+def blacklist_student(student_id):
+    stu           = Student.query.get_or_404(student_id)
+    stu.is_active = False
     db.session.commit()
-    flash(f'{s.full_name} re-activated.', 'success')
-    return redirect(url_for('admin_students'))
+    flash(f'{stu.full_name} blacklisted.', 'danger')
+    return redirect(url_for('manage_students'))
 
-@app.route('/admin/students/delete/<int:student_id>', methods=['POST'])
+
+@app.route('/admin/student/activate/<int:student_id>', methods=['POST'])
 @admin_required
-def deleted_students(student_id):
-    s = Student.query.get_or_404(student_id)
+def activate_student(student_id):
+    stu           = Student.query.get_or_404(student_id)
+    stu.is_active = True
+    db.session.commit()
+    flash(f'{stu.full_name} re-activated.', 'success')
+    return redirect(url_for('manage_students'))
+
+
+@app.route('/admin/student/delete/<int:student_id>', methods=['POST'])
+@admin_required
+def delete_student(student_id):
+    stu = Student.query.get_or_404(student_id)
     Application.query.filter_by(student_id=student_id).delete()
-    db.session.delete(s)
+    db.session.delete(stu)
     db.session.commit()
-    flash('Student deleted.', 'success')
-    return redirect(url_for('admin_students'))
+    flash("Student deleted.", "success")
+    return redirect(url_for('manage_students'))
+
 
 @app.route('/admin/applications')
 @admin_required
-def admin_applications():
+def manage_applications():
     return render_template('admin/applications.html', applications=Application.query.all())
 
-# init ----------------
 
-with app.app_context():
+# ─── INIT
+
+def init_db():
     db.create_all()
     if not Admin.query.filter_by(username='admin').first():
-        db.session.add(Admin(username='admin', password=generate_password_hash('admin123')))
+        default_admin          = Admin()
+        default_admin.username = 'admin'
+        default_admin.password = generate_password_hash('admin123')
+        db.session.add(default_admin)
         db.session.commit()
 
+with app.app_context():
+    init_db()
+
 if __name__ == '__main__':
-    port = 5001
-    app.run(debug=True, port=port)
+    app.run(debug=True, port=5001)

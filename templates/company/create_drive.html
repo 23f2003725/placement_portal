@@ -1,30 +1,38 @@
 {% extends "base.html" %}
 
 {% block body %}
-<h1>Create Placement Drive</h1>
-<a href="{{ url_for('company_dashboard') }}">Back to Dashboard</a>
+
+<h2>📢 Create Placement Drive</h2>
+<a href="{{ url_for('dashboard_company') }}" class="btn btn-outline-secondary btn-sm mb-3">Back to Dashboard</a>
+
 <hr>
 
-<form method="POST">
-    <label>Job Title</label><br>
-    <input type="text" name="job_title" required><br><br>
-
-    <label>Description</label><br>
-    <textarea name="description"></textarea><br><br>
-
-    <label>Eligibility</label><br>
-    <textarea name="eligibility"></textarea><br><br>
-
-    <label>Package</label><br>
-    <input type="text" name="package"><br><br>
-
-    <label>Location</label><br>
-    <input type="text" name="location"><br><br>
-
-    <label>Deadline</label><br>
-    <input type="text" name="deadline"><br><br>
-
-    <button type="submit">Submit for Approval</button>
+<form method="POST" style="max-width: 500px;">
+    <div class="mb-3">
+        <label class="form-label">Job Title</label>
+        <input type="text" name="job_title" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Description</label>
+        <textarea name="description" class="form-control"></textarea>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Eligibility</label>
+        <textarea name="eligibility" class="form-control" placeholder="e.g. CGPA > 7.0, CS/IT only"></textarea>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Package</label>
+        <input type="text" name="package" class="form-control" placeholder="e.g. 6 LPA">
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Location</label>
+        <input type="text" name="location" class="form-control" placeholder="e.g. Bangalore">
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Deadline</label>
+        <input type="text" name="deadline" class="form-control" placeholder="e.g. 30 Jan 2026">
+    </div>
+    <button type="submit" class="btn btn-success">Submit for Approval</button>
 </form>
 
 {% endblock body %}

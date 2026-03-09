@@ -1,37 +1,48 @@
 {% extends "base.html" %}
 
 {% block body %}
-<h1>All Companies</h1>
-<a href="{{ url_for('admin_dashboard') }}">Back to Dashboard</a>
+
+<h2>🏢 All Companies</h2>
+<a href="{{ url_for('dashboard_admin') }}" class="btn btn-outline-secondary btn-sm mb-3">Back to Dashboard</a>
+
 <hr>
 
-<form method="GET">
-    <input type="text" name="search" value="{{ search }}" placeholder="Search companies...">
-    <button type="submit">Search</button>
+<form method="GET" class="d-flex gap-2 mb-3">
+    <input type="text" name="search" class="form-control" value="{{ search }}" placeholder="Search companies...">
+    <button type="submit" class="btn btn-primary">Search</button>
 </form>
-<br>
 
 {% if companies %}
     {% for company in companies %}
-        <p>
-            <strong>{{ company.company_name }}</strong> | {{ company.email }} | Status: {{ company.approval_status }}<br>
-            <form method="POST" action="{{ url_for('approved_companies', company_id=company.id) }}" style="display:inline;">
-                <button type="submit">Approve</button>
-            </form>
-            <form method="POST" action="{{ url_for('rejected_companies', company_id=company.id) }}" style="display:inline;">
-                <button type="submit">Reject</button>
-            </form>
-            <form method="POST" action="{{ url_for('blacklisted_companies', company_id=company.id) }}" style="display:inline;">
-                <button type="submit">Blacklist</button>
-            </form>
-            <form method="POST" action="{{ url_for('deleted_companies', company_id=company.id) }}" style="display:inline;">
-                <button type="submit">Delete</button>
-            </form>
+    <div class="card mb-2 p-3">
+        <h6>{{ company.company_name }} <small class="text-muted">@{{ company.username }}</small></h6>
+        <p class="text-muted mb-2">{{ company.email }} | Status:
+            <span class="badge
+                {% if company.approval_status == 'Approved' %}bg-success
+                {% elif company.approval_status == 'Rejected' %}bg-danger
+                {% elif company.approval_status == 'Blacklisted' %}bg-dark
+                {% else %}bg-warning text-dark{% endif %}">
+                {{ company.approval_status }}
+            </span>
         </p>
-        <hr>
+        <div class="d-flex gap-2 flex-wrap">
+            <form method="POST" action="{{ url_for('approve_company', company_id=company.id) }}">
+                <button type="submit" class="btn btn-success btn-sm">Approve</button>
+            </form>
+            <form method="POST" action="{{ url_for('reject_company', company_id=company.id) }}">
+                <button type="submit" class="btn btn-warning btn-sm">Reject</button>
+            </form>
+            <form method="POST" action="{{ url_for('blacklist_company', company_id=company.id) }}">
+                <button type="submit" class="btn btn-dark btn-sm">Blacklist</button>
+            </form>
+            <form method="POST" action="{{ url_for('delete_company', company_id=company.id) }}">
+                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+            </form>
+        </div>
+    </div>
     {% endfor %}
 {% else %}
-    <p>No companies found.</p>
+    <p class="text-muted">No companies found.</p>
 {% endif %}
 
 {% endblock body %}

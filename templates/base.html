@@ -4,25 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Placement Portal</title>
-    <style>
-        body { font-family: Arial, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 20px; }
-        .flash { padding: 10px 15px; border-radius: 4px; margin-bottom: 15px; }
-        .flash.error { background: #fde8e8; color: #c0392b; border: 1px solid #e74c3c; }
-        .flash.success { background: #e8f8e8; color: #1e8449; border: 1px solid #27ae60; }
-        nav a { margin-right: 15px; }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
+<body class="bg-light">
+<div class="container mt-4" style="max-width: 900px;">
 
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
-                <div class="flash {{ category }}">{{ message }}</div>
+                <div class="alert alert-{{ category }}">{{ message }}</div>
             {% endfor %}
         {% endif %}
     {% endwith %}
 
     {% block body %}{% endblock body %}
 
+</div>
 </body>
 </html>

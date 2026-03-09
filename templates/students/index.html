@@ -1,10 +1,11 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block body %}
 
-<h1>Students Portal</h1>
-<p>Welcome to the Student Placement Portal. Please Login or register to access your account.</p>
+<h2>🎓 Student Portal</h2>
+<p class="text-muted mb-4">Welcome! Please login or register to access your account.</p>
 
-<a href="{{ url_for('student_login') }}">Login</a>
-<a href="{{ url_for('student_register') }}">Register</a>
+<a href="{{ url_for('login_student') }}" class="btn btn-primary">Login</a>
+<a href="{{ url_for('register_student') }}" class="btn btn-outline-primary">Register</a>
+
 {% endblock body %}

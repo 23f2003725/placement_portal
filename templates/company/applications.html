@@ -1,30 +1,44 @@
 {% extends "base.html" %}
 
 {% block body %}
-<h1>Applications for {{ drive.job_title }}</h1>
-<a href="{{ url_for('company_dashboard') }}">Back to Dashboard</a>
+
+<h2>👥 Applicants for {{ drive.job_title }}</h2>
+<a href="{{ url_for('dashboard_company') }}" class="btn btn-outline-secondary btn-sm mb-3">Back to Dashboard</a>
+
 <hr>
 
 {% if applications %}
     {% for app in applications %}
-        <p>
-            <strong>{{ app.student.full_name }}</strong> | {{ app.student.email }}<br>
-            Department: {{ app.student.department or 'N/A' }} | CGPA: {{ app.student.cgpa or 'N/A' }}<br>
-            Applied on: {{ app.applied_date.strftime('%d %b %Y') }} | Status: <strong>{{ app.status }}</strong><br>
-            <form method="POST" action="{{ url_for('company_update_application', application_id=app.id) }}">
-                <select name="status">
-                    <option value="Applied" {% if app.status == 'Applied' %}selected{% endif %}>Applied</option>
-                    <option value="Shortlisted" {% if app.status == 'Shortlisted' %}selected{% endif %}>Shortlisted</option>
-                    <option value="Selected" {% if app.status == 'Selected' %}selected{% endif %}>Selected</option>
-                    <option value="Rejected" {% if app.status == 'Rejected' %}selected{% endif %}>Rejected</option>
-                </select>
-                <button type="submit">Update</button>
-            </form>
+    <div class="card mb-3 p-3">
+        <h6>{{ app.student.full_name }} — {{ app.student.email }}</h6>
+        <p class="text-muted mb-1">
+            Dept: {{ app.student.department or 'N/A' }} |
+            CGPA: {{ app.student.cgpa or 'N/A' }} |
+            Applied: {{ app.applied_date.strftime('%d %b %Y') }}
         </p>
-        <hr>
+        <p class="mb-2">
+            Status:
+            <span class="badge
+                {% if app.status == 'Selected' %}bg-success
+                {% elif app.status == 'Rejected' %}bg-danger
+                {% elif app.status == 'Shortlisted' %}bg-warning text-dark
+                {% else %}bg-secondary{% endif %}">
+                {{ app.status }}
+            </span>
+        </p>
+        <form method="POST" action="{{ url_for('update_applicant_status', app_id=app.id) }}" class="d-flex gap-2">
+            <select name="status" class="form-select form-select-sm" style="max-width: 200px;">
+                <option value="Applied"     {% if app.status == 'Applied' %}selected{% endif %}>Applied</option>
+                <option value="Shortlisted" {% if app.status == 'Shortlisted' %}selected{% endif %}>Shortlisted</option>
+                <option value="Selected"    {% if app.status == 'Selected' %}selected{% endif %}>Selected</option>
+                <option value="Rejected"    {% if app.status == 'Rejected' %}selected{% endif %}>Rejected</option>
+            </select>
+            <button type="submit" class="btn btn-primary btn-sm">Update</button>
+        </form>
+    </div>
     {% endfor %}
 {% else %}
-    <p>No applications yet.</p>
+    <p class="text-muted">No applications yet for this drive.</p>
 {% endif %}
 
 {% endblock body %}

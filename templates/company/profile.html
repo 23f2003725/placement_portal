@@ -1,27 +1,34 @@
 {% extends "base.html" %}
 
 {% block body %}
-<h1>Company Profile</h1>
-<a href="{{ url_for('company_dashboard') }}">Back to Dashboard</a>
+
+<h2>🏢 Company Profile</h2>
+<a href="{{ url_for('dashboard_company') }}" class="btn btn-outline-secondary btn-sm mb-3">Back to Dashboard</a>
+
 <hr>
 
-<form method="POST">
-    <label>Company Name</label><br>
-    <input type="text" name="company_name" value="{{ company.company_name }}"><br><br>
-
-    <label>Email</label><br>
-    <input type="email" name="email" value="{{ company.email }}"><br><br>
-
-    <label>HR Contact</label><br>
-    <input type="text" name="hr_contact" value="{{ company.hr_contact or '' }}"><br><br>
-
-    <label>Website</label><br>
-    <input type="text" name="website" value="{{ company.website or '' }}"><br><br>
-
-    <label>Description</label><br>
-    <textarea name="description">{{ company.description or '' }}</textarea><br><br>
-
-    <button type="submit">Save</button>
+<form method="POST" style="max-width: 500px;">
+    <div class="mb-3">
+        <label class="form-label">Company Name</label>
+        <input type="text" name="company_name" class="form-control" value="{{ company.company_name }}">
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input type="email" name="email" class="form-control" value="{{ company.email }}">
+    </div>
+    <div class="mb-3">
+        <label class="form-label">HR Contact</label>
+        <input type="text" name="hr_contact" class="form-control" value="{{ company.hr_contact or '' }}">
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Website</label>
+        <input type="text" name="website" class="form-control" value="{{ company.website or '' }}" placeholder="https://www.example.com">
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Description</label>
+        <textarea name="description" class="form-control">{{ company.description or '' }}</textarea>
+    </div>
+    <button type="submit" class="btn btn-success">Save</button>
 </form>
 
 {% endblock body %}

@@ -1,21 +1,28 @@
 {% extends "base.html" %}
 
 {% block body %}
-<h1>All Applications</h1>
-<a href="{{ url_for('admin_dashboard') }}">Back to Dashboard</a>
+
+<h2>📄 All Applications</h2>
+<a href="{{ url_for('dashboard_admin') }}" class="btn btn-outline-secondary btn-sm mb-3">Back to Dashboard</a>
+
 <hr>
 
 {% if applications %}
     {% for app in applications %}
-        <p>
-            <strong>{{ app.student.full_name }}</strong> applied for <strong>{{ app.drive.job_title }}</strong><br>
-            Company: {{ app.drive.company.company_name }}<br>
-            Applied on: {{ app.applied_date.strftime('%d %b %Y') }} | Status: <strong>{{ app.status }}</strong>
-        </p>
-        <hr>
+    <div class="card mb-2 p-3">
+        <h6>{{ app.student.full_name }} → {{ app.drive.job_title }}</h6>
+        <p class="text-muted mb-1">🏢 {{ app.drive.company.company_name }} | Applied: {{ app.applied_date.strftime('%d %b %Y') }}</p>
+        <span class="badge
+            {% if app.status == 'Selected' %}bg-success
+            {% elif app.status == 'Rejected' %}bg-danger
+            {% elif app.status == 'Shortlisted' %}bg-warning text-dark
+            {% else %}bg-secondary{% endif %}">
+            {{ app.status }}
+        </span>
+    </div>
     {% endfor %}
 {% else %}
-    <p>No applications found.</p>
+    <p class="text-muted">No applications found.</p>
 {% endif %}
 
 {% endblock body %}

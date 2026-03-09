@@ -1,4 +1,36 @@
-__pycache__
-_pycache_
+# ───────── Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ───────── Virtual Environment
+venv/
+env/
+ENV/
+
+# ───────── Environment Variables
 .env
-static\resumes
+
+# ───────── Flask Instance / Database
+*.db
+*.sqlite3
+
+# ───────── Uploaded Files
+static/resumes/*
+!static/resumes/.gitkeep
+
+# ───────── Logs
+*.log
+
+# ───────── OS Files
+.DS_Store
+Thumbs.db
+
+# ───────── IDE Files
+.vscode/
+.idea/
+
+# ───────── Build Artifacts
+dist/
+build/
+*.egg-info/

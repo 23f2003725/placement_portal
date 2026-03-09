@@ -1,57 +1,85 @@
 {% extends "base.html" %}
 
 {% block body %}
-<h1>Admin Dashboard</h1>
 
-<a href="{{ url_for('admin_companies') }}">Companies</a> |
-<a href="{{ url_for('admin_drives') }}">Drives</a> |
-<a href="{{ url_for('admin_students') }}">Students</a> |
-<a href="{{ url_for('admin_applications') }}">Applications</a> |
-<a href="{{ url_for('admin_logout') }}">Logout</a>
-
-<hr>
-
-<p>Total Students: {{ total_students }}</p>
-<p>Total Companies: {{ total_companies }}</p>
-<p>Total Drives: {{ total_drives }}</p>
-<p>Total Applications: {{ total_apps }}</p>
+<h2>🛠️ Admin Dashboard</h2>
+<div class="mb-3">
+    <a href="{{ url_for('manage_companies') }}" class="btn btn-outline-primary btn-sm">Companies</a>
+    <a href="{{ url_for('manage_drives') }}" class="btn btn-outline-success btn-sm">Drives</a>
+    <a href="{{ url_for('manage_students') }}" class="btn btn-outline-secondary btn-sm">Students</a>
+    <a href="{{ url_for('manage_applications') }}" class="btn btn-outline-dark btn-sm">Applications</a>
+    <a href="{{ url_for('logout_admin') }}" class="btn btn-outline-danger btn-sm">Logout</a>
+</div>
 
 <hr>
 
-<h2>Pending Companies</h2>
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-center p-3 border-primary">
+            <h3 class="text-primary">{{ total_students }}</h3>
+            <p class="text-muted mb-0">Students</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center p-3 border-success">
+            <h3 class="text-success">{{ total_companies }}</h3>
+            <p class="text-muted mb-0">Companies</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center p-3 border-warning">
+            <h3 class="text-warning">{{ total_drives }}</h3>
+            <p class="text-muted mb-0">Drives</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center p-3 border-danger">
+            <h3 class="text-danger">{{ total_apps }}</h3>
+            <p class="text-muted mb-0">Applications</p>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<h4>⏳ Pending Companies</h4>
 {% if pending_companies %}
     {% for company in pending_companies %}
-        <p>
-            <strong>{{ company.company_name }}</strong> | {{ company.email }}<br>
-            <form method="POST" action="{{ url_for('approved_companies', company_id=company.id) }}" style="display:inline;">
-                <button type="submit">Approve</button>
+    <div class="card mb-2 p-3">
+        <p class="mb-2"><strong>{{ company.company_name }}</strong> | {{ company.email }}</p>
+        <div class="d-flex gap-2">
+            <form method="POST" action="{{ url_for('approve_company', company_id=company.id) }}">
+                <button type="submit" class="btn btn-success btn-sm">Approve</button>
             </form>
-            <form method="POST" action="{{ url_for('rejected_companies', company_id=company.id) }}" style="display:inline;">
-                <button type="submit">Reject</button>
+            <form method="POST" action="{{ url_for('reject_company', company_id=company.id) }}">
+                <button type="submit" class="btn btn-danger btn-sm">Reject</button>
             </form>
-        </p>
-        <hr>
+        </div>
+    </div>
     {% endfor %}
 {% else %}
-    <p>No pending companies.</p>
+    <p class="text-muted">No pending companies.</p>
 {% endif %}
 
-<h2>Pending Drives</h2>
+<hr>
+
+<h4>⏳ Pending Drives</h4>
 {% if pending_drives %}
     {% for drive in pending_drives %}
-        <p>
-            <strong>{{ drive.job_title }}</strong> by {{ drive.company.company_name }} | Deadline: {{ drive.deadline }}<br>
-            <form method="POST" action="{{ url_for('approved_drives', drive_id=drive.id) }}" style="display:inline;">
-                <button type="submit">Approve</button>
+    <div class="card mb-2 p-3">
+        <p class="mb-2"><strong>{{ drive.job_title }}</strong> by {{ drive.company.company_name }} | ⏰ {{ drive.deadline }}</p>
+        <div class="d-flex gap-2">
+            <form method="POST" action="{{ url_for('approve_drive', drive_id=drive.id) }}">
+                <button type="submit" class="btn btn-success btn-sm">Approve</button>
             </form>
-            <form method="POST" action="{{ url_for('rejected_drives', drive_id=drive.id) }}" style="display:inline;">
-                <button type="submit">Reject</button>
+            <form method="POST" action="{{ url_for('reject_drive', drive_id=drive.id) }}">
+                <button type="submit" class="btn btn-danger btn-sm">Reject</button>
             </form>
-        </p>
-        <hr>
+        </div>
+    </div>
     {% endfor %}
 {% else %}
-    <p>No pending drives.</p>
+    <p class="text-muted">No pending drives.</p>
 {% endif %}
 
 {% endblock body %}

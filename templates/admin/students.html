@@ -1,35 +1,43 @@
 {% extends "base.html" %}
 
 {% block body %}
-<h1>All Students</h1>
-<a href="{{ url_for('admin_dashboard') }}">Back to Dashboard</a>
+
+<h2>🎓 All Students</h2>
+<a href="{{ url_for('dashboard_admin') }}" class="btn btn-outline-secondary btn-sm mb-3">Back to Dashboard</a>
+
 <hr>
 
-<form method="GET">
-    <input type="text" name="search" value="{{ search }}" placeholder="Search students...">
-    <button type="submit">Search</button>
+<form method="GET" class="d-flex gap-2 mb-3">
+    <input type="text" name="search" class="form-control" value="{{ search }}" placeholder="Search students...">
+    <button type="submit" class="btn btn-primary">Search</button>
 </form>
-<br>
 
 {% if students %}
     {% for student in students %}
-        <p>
-            <strong>{{ student.full_name }}</strong> | {{ student.email }} | {{ student.department or 'N/A' }}<br>
-            CGPA: {{ student.cgpa or 'N/A' }} | Status: {{ 'Active' if student.is_active else 'Blacklisted' }}<br>
-            <form method="POST" action="{{ url_for('blacklisted_students', student_id=student.id) }}" style="display:inline;">
-                <button type="submit">Blacklist</button>
-            </form>
-            <form method="POST" action="{{ url_for('activated_students', student_id=student.id) }}" style="display:inline;">
-                <button type="submit">Activate</button>
-            </form>
-            <form method="POST" action="{{ url_for('deleted_students', student_id=student.id) }}" style="display:inline;">
-                <button type="submit">Delete</button>
-            </form>
+    <div class="card mb-2 p-3">
+        <h6>{{ student.full_name }} <small class="text-muted">@{{ student.username }}</small></h6>
+        <p class="text-muted mb-1">{{ student.email }} | {{ student.department or 'N/A' }} | CGPA: {{ student.cgpa or 'N/A' }}</p>
+        <p class="mb-2">
+            Status:
+            <span class="badge {% if student.is_active %}bg-success{% else %}bg-danger{% endif %}">
+                {{ 'Active' if student.is_active else 'Blacklisted' }}
+            </span>
         </p>
-        <hr>
+        <div class="d-flex gap-2 flex-wrap">
+            <form method="POST" action="{{ url_for('blacklist_student', student_id=student.id) }}">
+                <button type="submit" class="btn btn-warning btn-sm">Blacklist</button>
+            </form>
+            <form method="POST" action="{{ url_for('activate_student', student_id=student.id) }}">
+                <button type="submit" class="btn btn-success btn-sm">Activate</button>
+            </form>
+            <form method="POST" action="{{ url_for('delete_student', student_id=student.id) }}">
+                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+            </form>
+        </div>
+    </div>
     {% endfor %}
 {% else %}
-    <p>No students found.</p>
+    <p class="text-muted">No students found.</p>
 {% endif %}
 
 {% endblock body %}

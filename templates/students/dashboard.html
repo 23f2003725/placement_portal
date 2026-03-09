@@ -1,42 +1,54 @@
 {% extends "base.html" %}
 
 {% block body %}
-<h1>Welcome, {{ student.full_name }}</h1>
 
-<a href="{{ url_for('student_profile') }}">Profile</a> |
-<a href="{{ url_for('view_drives') }}">View Drives</a> |
-<a href="{{ url_for('student_history') }}">History</a> |
-<a href="{{ url_for('student_logout') }}">Logout</a>
+<h2>🎓 Welcome, {{ student.full_name }}</h2>
+<div class="mb-3">
+    <a href="{{ url_for('profile_student') }}" class="btn btn-outline-primary btn-sm">Profile</a>
+    <a href="{{ url_for('browse_drives') }}" class="btn btn-outline-success btn-sm">View Drives</a>
+    <a href="{{ url_for('application_history') }}" class="btn btn-outline-secondary btn-sm">History</a>
+    <a href="{{ url_for('logout_student') }}" class="btn btn-outline-danger btn-sm">Logout</a>
+</div>
 
 <hr>
 
-<h2>My Applications</h2>
+<h4>My Applications</h4>
 {% if applications %}
     {% for app in applications %}
-        <p>{{ app.drive.job_title }} at {{ app.drive.company.company_name }} — <strong>{{ app.status }}</strong></p>
+    <div class="card mb-2 p-3">
+        <p class="mb-1"><strong>{{ app.drive.job_title }}</strong> at {{ app.drive.company.company_name }}</p>
+        <span class="badge
+            {% if app.status == 'Selected' %}bg-success
+            {% elif app.status == 'Rejected' %}bg-danger
+            {% elif app.status == 'Shortlisted' %}bg-warning text-dark
+            {% else %}bg-secondary{% endif %}">
+            {{ app.status }}
+        </span>
+    </div>
     {% endfor %}
 {% else %}
-    <p>No applications yet.</p>
+    <p class="text-muted">No applications yet.</p>
 {% endif %}
 
 <hr>
 
-<h2>Open Drives</h2>
+<h4>Open Drives</h4>
 {% if drives %}
     {% for drive in drives %}
-        <p>
-            {{ drive.job_title }} — {{ drive.company.company_name }} | {{ drive.package }} | Deadline: {{ drive.deadline }}
-            {% if drive.id in applied_drive_ids %}
-                — <em>Applied</em>
-            {% else %}
-                <form method="POST" action="{{ url_for('student_apply', drive_id=drive.id) }}" style="display:inline;">
-                    <button type="submit">Apply</button>
-                </form>
-            {% endif %}
-        </p>
+    <div class="card mb-2 p-3">
+        <p class="mb-1"><strong>{{ drive.job_title }}</strong> — {{ drive.company.company_name }}</p>
+        <p class="text-muted mb-2"><small>📦 {{ drive.package }} | ⏰ Deadline: {{ drive.deadline }}</small></p>
+        {% if drive.id in applied_drive_ids %}
+            <span class="badge bg-secondary">Already Applied</span>
+        {% else %}
+            <form method="POST" action="{{ url_for('apply_to_drive', drive_id=drive.id) }}">
+                <button type="submit" class="btn btn-success btn-sm">Apply</button>
+            </form>
+        {% endif %}
+    </div>
     {% endfor %}
 {% else %}
-    <p>No drives available.</p>
+    <p class="text-muted">No drives available.</p>
 {% endif %}
 
 {% endblock body %}
