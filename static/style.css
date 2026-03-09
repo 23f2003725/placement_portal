@@ -1,0 +1,115 @@
+/* ── General ── */
+body {
+    background-color: #f4f6f9;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    color: #333;
+}
+
+.container {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 30px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* ── Headings ── */
+h2 {
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 6px;
+}
+
+h4, h6 {
+    color: #2c3e50;
+}
+
+hr {
+    border-color: #e0e0e0;
+    margin: 20px 0;
+}
+
+/* ── Navbar buttons row ── */
+.btn-sm {
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 13px;
+}
+
+/* ── Cards ── */
+.card {
+    border: 1px solid #e3e8ef;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    transition: box-shadow 0.2s;
+}
+
+.card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* ── Badges ── */
+.badge {
+    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: 20px;
+}
+
+/* ── Forms ── */
+.form-control, .form-select {
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    font-size: 14px;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #2980b9;
+    box-shadow: 0 0 0 0.2rem rgba(41, 128, 185, 0.15);
+}
+
+.form-label {
+    font-weight: 600;
+    font-size: 14px;
+    color: #444;
+}
+
+/* ── Buttons ── */
+.btn {
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.btn-primary   { background-color: #2980b9; border-color: #2980b9; }
+.btn-primary:hover   { background-color: #2471a3; border-color: #2471a3; }
+
+.btn-success   { background-color: #27ae60; border-color: #27ae60; }
+.btn-success:hover   { background-color: #1e8449; border-color: #1e8449; }
+
+.btn-danger    { background-color: #e74c3c; border-color: #e74c3c; }
+.btn-danger:hover    { background-color: #c0392b; border-color: #c0392b; }
+
+.btn-warning   { background-color: #f39c12; border-color: #f39c12; color: #fff; }
+.btn-warning:hover   { background-color: #d68910; border-color: #d68910; color: #fff; }
+
+/* ── Stat cards on admin dashboard ── */
+.border-primary { border-color: #2980b9 !important; }
+.border-success { border-color: #27ae60 !important; }
+.border-warning { border-color: #f39c12 !important; }
+.border-danger  { border-color: #e74c3c !important; }
+
+/* ── Alert flash messages ── */
+.alert {
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+/* ── Text ── */
+.text-muted {
+    font-size: 13px;
+}
+
+small {
+    font-size: 13px;
+}

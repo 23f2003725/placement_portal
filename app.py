@@ -120,12 +120,18 @@ def fetch_drive(drive_id):
 
 
 # ─── HOME
+
 @app.route('/')
 def home():
     return render_template('index.html')
 
 
 # ─── STUDENT
+
+@app.route('/student')
+def students_portal():
+    return render_template('students/index.html')
+
 
 @app.route('/student/signup', methods=['GET', 'POST'])
 def register_student():
@@ -137,7 +143,7 @@ def register_student():
         if Student.query.filter_by(username=username).first():
             flash("Username already exists.", "danger")
             return render_template('students/register.html')
-        s          = Student()
+        s           = Student()
         s.username  = username
         s.email     = email
         s.full_name = full_name
@@ -175,10 +181,10 @@ def logout_student():
 @app.route('/student/home')
 @student_required
 def dashboard_student():
-    s            = Student.query.get(session['sid'])
-    apps         = Application.query.filter_by(student_id=s.id).all()
-    open_drives  = PlacementDrive.query.filter_by(status='Approved').all()
-    applied_ids  = {a.drive_id for a in apps}
+    s           = db.session.get(Student, session['sid'])
+    apps        = Application.query.filter_by(student_id=s.id).all()
+    open_drives = PlacementDrive.query.filter_by(status='Approved').all()
+    applied_ids = {a.drive_id for a in apps}
     return render_template('students/dashboard.html', student=s, applications=apps, drives=open_drives, applied_drive_ids=applied_ids)
 
 
@@ -186,7 +192,7 @@ def dashboard_student():
 @student_required
 def browse_drives():
     open_drives = PlacementDrive.query.filter_by(status='Approved').all()
-    s           = Student.query.get(session['sid'])
+    s           = db.session.get(Student, session['sid'])
     applied_ids = {a.drive_id for a in s.applications}
     return render_template('students/drives.html', drives=open_drives, applied_ids=applied_ids)
 
@@ -211,7 +217,7 @@ def apply_to_drive(drive_id):
 @app.route('/student/account', methods=['GET', 'POST'])
 @student_required
 def profile_student():
-    s = Student.query.get(session['sid'])
+    s = db.session.get(Student, session['sid'])
     if request.method == 'POST':
         s.full_name       = request.form.get('full_name', s.full_name)
         s.email           = request.form.get('email', s.email)
@@ -300,7 +306,7 @@ def logout_company():
 @app.route('/company/home')
 @company_required
 def dashboard_company():
-    c      = Company.query.get(session['cid'])
+    c      = db.session.get(Company, session['cid'])
     drives = PlacementDrive.query.filter_by(company_id=c.id).all()
     return render_template('company/dashboard.html', company=c, drives=drives)
 
@@ -308,7 +314,7 @@ def dashboard_company():
 @app.route('/company/account', methods=['GET', 'POST'])
 @company_required
 def profile_company():
-    c = Company.query.get(session['cid'])
+    c = db.session.get(Company, session['cid'])
     if request.method == 'POST':
         c.company_name = request.form.get('company_name', c.company_name)
         c.email        = request.form.get('email', c.email)
